@@ -10,3 +10,24 @@ body {
   align-items: center;
   justify-content: center;
 }
+
+.contact-form {
+  display: flex;
+  background-color: gray;
+  border-radius: 5px;
+  padding: 10px;
+  width: 40vw;
+  height: 80vh;
+}
+
+.contact-form-views {
+  width: 100%;
+  height: fit-content;
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.clickable-header {
+  cursor: pointer;
+  padding: 10px;
+}
