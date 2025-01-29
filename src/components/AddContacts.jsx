@@ -11,26 +11,27 @@ function AddContacts() {
     };
 
     return(
-        <div className="contact-form">
-            <h2>Add a Contact</h2>
-            <form>
-                <div>
-                    <label>Name</label>
-                    {/* can use required as an option */}
-                    <input
-                        type="text"
-                        name="name"
-                        value={formEntryData.name}
-                        onChange={handleChange}
-                        className="w-full p-2 border rounded"
-                    />
-                </div>
-                <div>
-                    <Button>Click Me</Button>
-                </div>
-            </form>
+        <div>
+            I'm the Add Contacts Screen
         </div>
     )
+
+//     <form>
+//     <div>
+//         <label>Name</label>
+//         {/* can use required as an option */}
+//         <input
+//             type="text"
+//             name="name"
+//             value={formEntryData.name}
+//             onChange={handleChange}
+//             className="w-full p-2 border rounded"
+//         />
+//     </div>
+//     <div>
+//         <Button>Click Me</Button>
+//     </div>
+// </form> 
 }
 
 export default AddContacts
