@@ -1,3 +1,4 @@
+
 body {
   margin: 0;
   font-family: "Roboto", sans-serif;
@@ -9,4 +10,38 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.contact-form {
+  background-color: gray;
+  border-radius: 10px;
+  padding: 10px;
+  width: 40vw;
+  height: 80vh;
+  border: 2px solid;
+}
+
+.contact-form-views {
+  width: 100%;
+  height: fit-content;
+  display: grid;
+  gap: 1px;
+  grid-template-columns: 1fr 1fr;
+  border-bottom: 2px solid;
+}
+
+.contact-form-views :hover {
+  background-color: rgb(159, 159, 159);
+}
+
+.headerButton {
+  width: 100%;
+}
+
+.headerButton.selected {
+  background-color: rgb(159, 159, 159);
+}
+
+.add-contact-selector {
+  border-right: 2px solid;
 }
