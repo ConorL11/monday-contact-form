@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Button } from "monday-ui-react-core";
 import { Heading } from "@vibe/core";
 import ViewContacts from "./ViewContacts";
-import AddContacts from "./AddContacts";
+import AddContact from "./AddContact";
 
 function ContactForm() {
     
@@ -16,7 +16,7 @@ function ContactForm() {
         <div className="contact-form">
             <div className="contact-form-views">
                 <div  className="clickable-header add-contact-selector">
-                    <Button kind="tertiary" className={`headerButton ${selectedView === 'addContacts' ? 'selected' : ''}`} onClick={() => {handleViewChange('addContacts')}}>
+                    <Button kind="tertiary" className={`headerButton ${selectedView === 'addContact' ? 'selected' : ''}`} onClick={() => {handleViewChange('addContact')}}>
                         <Heading type="h3" align="center">Add Contact</Heading>
                     </Button>
                 </div>
@@ -26,7 +26,7 @@ function ContactForm() {
                     </Button>
                 </div>
             </div>
-            {selectedView === 'addContacts' && <AddContacts />}
+            {selectedView === 'addContact' && <AddContact />}
             {selectedView === 'viewContacts' && <ViewContacts />}
         </div>
     )
