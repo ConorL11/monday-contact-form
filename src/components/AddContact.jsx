@@ -10,7 +10,7 @@ function AddContact() {
 
     // success handling for form submittal
     const [successText, setSuccessText] = useState(null);
-    const [success, setSuccess] = useState(false);
+    const [success, setSuccess] = useState(null);
 
     // State for form inputs
     const [formData, setFormData] = useState({
@@ -27,24 +27,33 @@ function AddContact() {
 
     // Submit handler
     const handleSubmit = useCallback(async (event) => {
-        if (event) event.preventDefault(); // Prevent default only if event exists
+        if (event) event.preventDefault();
         await createItem(formData);
         setSuccess(true);
         setSuccessText("Contact Added");
     }, [formData]);
-
     
+
+    // Reset form handler
+    const resetForm = () => {
+        setFormData({
+            firstName: "",
+            lastName: "",
+            email: ""
+        });
+        setSuccess(null);
+        setSuccessText(null);
+    };
 
     async function createItem() {
         try {
             const boardId = (await monday.get("context")).data.boardId;
-            // const columnValues = JSON.stringify({ text_mkmmh4rt: `${formData.firstName}` }).replace(/"/g, '\\"');
             const columnValues = JSON.stringify({ 
                 text_mkmmh4rt: formData.firstName, 
                 text_mkmmhp5z: formData.lastName, 
                 email_mkmmyw8x: { 
                     email: formData.email, 
-                    text: formData.email // You can customize this display text
+                    text: formData.email
                 }
             }).replace(/"/g, '\\"');
 
@@ -68,8 +77,6 @@ function AddContact() {
             console.log(error);
         }
     }
-    
-    
 
     return(
         <div>
@@ -94,7 +101,7 @@ function AddContact() {
                         onChange={handleChange("email")}
                     />
                 </div>
-                <div>
+                <div className="flexApart">
                     <Button
                         type="submit"
                         size={Button.sizes.MEDIUM}
@@ -102,10 +109,18 @@ function AddContact() {
                         successIcon={Check}
                         successText={successText}
                     >
-                        Button
+                        Add Contact
                     </Button>
+                    {success && 
+                        <Button
+                            onClick={resetForm} 
+                            size={Button.sizes.MEDIUM}
+                        >
+                            Reset Form
+                        </Button>
+                    }
                 </div>
-            </form> 
+            </form>
         </div>
     )
 }

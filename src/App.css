@@ -13,6 +13,15 @@ body {
   justify-content: center;
 }
 
+
+/* Generic Styling */
+
+.flexApart {
+  display: flex;
+  justify-content: space-between;
+}
+
+
 /* Main View Styling */
 
 .contact-form {
