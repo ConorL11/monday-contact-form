@@ -1,3 +1,4 @@
+/* Parent App Styling */
 
 body {
   margin: 0;
@@ -11,6 +12,17 @@ body {
   align-items: center;
   justify-content: center;
 }
+
+
+/* Generic Styling */
+
+.flexApart {
+  display: flex;
+  justify-content: space-between;
+}
+
+
+/* Main View Styling */
 
 .contact-form {
   background-color: gray;
@@ -44,4 +56,16 @@ body {
 
 .add-contact-selector {
   border-right: 2px solid;
+}
+
+/* Styling for Add Contacts View */
+
+.add-contact-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.add-contact-view {
+  padding: 5px;
 }
