@@ -29,7 +29,7 @@ function ViewContacts() {
                         }
                     }
                 }
-            }`
+            }`;
             const variables =  { boardId };
             const response = await monday.api(query, { variables });
             console.log(response.data.boards)
