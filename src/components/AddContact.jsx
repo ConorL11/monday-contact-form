@@ -1,12 +1,65 @@
-import { Button } from "monday-ui-react-core";
+import { Button, Dropdown } from "monday-ui-react-core";
 import { Check } from "monday-ui-react-core/icons";
-import { useCallback, useState } from "react";
+import { useCallback, useState, useEffect } from "react";
 import { TextField } from "@vibe/core";
 import "../App.css";
 import mondaySdk from "monday-sdk-js";
 const monday = mondaySdk();
 
 function AddContact() {
+
+    // state var for status labels
+    const [statusValues, setStatusValues] = useState();
+
+    useEffect(() => {
+        if(!statusValues){
+            getStatusValues();
+        }
+    }, [statusValues])
+    
+
+    // get status values for form
+    async function getStatusValues() {
+        try {
+            const boardId = (await monday.get("context")).data.boardId;
+            const variables = { boardId }
+
+            let query = `
+                query getStatuses ($boardId:[ID!]){
+                    boards(ids: $boardId){
+                    columns (ids: ["status"]){
+                        id,
+                        title,
+                        type, 
+                        settings_str
+                    }
+                    }
+                }
+            `;
+    
+            // get response and accept settings string into a const 
+            const response = await monday.api(query, { variables });
+            const settingsStringRaw = response.data.boards[0].columns[0].settings_str;
+            const settingsString = JSON.parse(settingsStringRaw);
+            const statusValuesRaw = Object.values(settingsString.labels);
+
+            // format status Values to fit in Dropdown component
+            const statusValues = [];
+            for(const val of statusValuesRaw){
+                statusValues.push({
+                    value: val,
+                    label: val
+                });
+            };
+
+            //set state for dropdown and return dropdown formatted options
+            setStatusValues(statusValues)
+            return statusValues;
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
 
     // success handling for form submittal
     const [successText, setSuccessText] = useState(null);
@@ -16,7 +69,8 @@ function AddContact() {
     const [formData, setFormData] = useState({
         firstName: "",
         lastName: "",
-        email: ""
+        email: "", 
+        status: "",
     });
 
 
@@ -28,6 +82,8 @@ function AddContact() {
     // Submit handler
     const handleSubmit = useCallback(async (event) => {
         if (event) event.preventDefault();
+        console.log("formData")
+        console.log(formData)
         await createItem(formData);
         setSuccess(true);
         setSuccessText("Contact Added");
@@ -39,7 +95,8 @@ function AddContact() {
         setFormData({
             firstName: "",
             lastName: "",
-            email: ""
+            email: "", 
+            status: ""
         });
         setSuccess(null);
         setSuccessText(null);
@@ -54,9 +111,10 @@ function AddContact() {
                 email_mkmmyw8x: { 
                     email: formData.email, 
                     text: formData.email
-                }
+                },
+                status: formData.status.label
             }).replace(/"/g, '\\"');
-
+    
             let query = `
                 mutation {
                     create_item(
@@ -68,15 +126,16 @@ function AddContact() {
                     }
                 }
             `;
-    
+        
             const response = await monday.api(query);
             console.log(response);
-
+    
             return response;
         } catch (error) {
             console.log(error);
         }
     }
+    
 
     return(
         <div>
@@ -99,6 +158,13 @@ function AddContact() {
                         title="Email"
                         value={formData.email}
                         onChange={handleChange("email")}
+                    />
+                    <div className="formInputHeader">Status</div>
+                    <Dropdown
+                        options={statusValues}
+                        title="Status"
+                        value={formData.status}
+                        onChange={handleChange("status")}
                     />
                 </div>
                 <div className="flexApart">
