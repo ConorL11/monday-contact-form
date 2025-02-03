@@ -22,7 +22,7 @@ function ContactForm() {
                 </div>
                 <div className="clickable-header view-contact-selector">
                     <Button kind="tertiary" className={`headerButton ${selectedView === 'viewContacts' ? 'selected' : ''}`} onClick={() => {handleViewChange('viewContacts')}}>
-                        <Heading type="h3" align="center">View Contact Contact</Heading>
+                        <Heading type="h3" align="center">View Contact</Heading>
                     </Button>
                 </div>
             </div>
