@@ -12,21 +12,39 @@ function AddContact() {
     const [successText, setSuccessText] = useState(null);
     const [success, setSuccess] = useState(false);
     const handleSubmit = useCallback(async() => {
+        addGroup();
         setSuccess(true);
-        setSuccessText('Contact Added')
+        setSuccessText('Contact Added');
     }, [setSuccess])
 
 
-    // Function to post data to board
-    async function getGroups() {
+    async function addGroup() {
         try {
-            const boardId = (await monday.get('context')).data.boardId;
-            let query = `something`
-            
+            // const boardId = (await monday.get('context')).data.boardId;
+            // let query = `query getNames ($boardId:[ID!]){
+            //     boards(ids: $boardId){
+            //         items_page{
+            //         items {
+            //             id,
+            //             column_values(ids:["text_mkmmh4rt","text_mkmmhp5z"]){
+            //             id,
+            //             text
+            //             }
+            //         }
+            //         }
+            //     }
+            // }`
+            // const variables =  { boardId };
+            // const response = await monday.api(query, { variables });
+            // console.log(response.data.boards)
+            // return response.data.boards
+            console.log("addGroup Function");
+            return true
         } catch (error) {
-            
+            console.log(error);
         }
     }
+
 
     return(
         <div>
