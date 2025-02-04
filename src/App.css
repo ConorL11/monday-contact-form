@@ -64,6 +64,11 @@ body {
 }
 
 /* Styling for Add Contacts View */
+.contact-form-container {
+  max-height: 50vh;
+  padding: 5px;
+  overflow-y: auto;  /* Enable vertical scrolling */
+}
 
 .add-contact-inputs {
   display: flex;

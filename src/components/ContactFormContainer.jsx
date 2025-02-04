@@ -3,7 +3,6 @@ import { useState } from "react";
 import { Button } from "monday-ui-react-core";
 import { Heading } from "@vibe/core";
 import ViewContacts from "./ViewContacts";
-// import AddContact from "./AddContact";
 import ContactForm from "./ContactForm";
 
 function ContactFormContainer() {

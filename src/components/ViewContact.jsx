@@ -1,53 +1,36 @@
-// function ViewContact ({ selectedContact }) {
-
-//     const [isEditing, setIsEditing] = useState(false);
-//     const [editedContact, setEditedContact] = useState({ ...selectedContact });
-
-
-//     return (
-//         <div>
-        //     <p><strong>Item ID:</strong> {selectedContact.id}</p>
-        //     <p><strong>Name:</strong> {selectedContact.name}</p>
-        //     <p><strong>First Name:</strong> {selectedContact.firstName}</p>
-        //     <p><strong>Last Name:</strong> {selectedContact.lastName}</p>
-        //     <p><strong>Status:</strong> {selectedContact.status}</p>
-        // </div>
-//     )
-// }
-
-// export default ViewContact
-
-import { useEffect, useState } from "react";
 import { Button } from "monday-ui-react-core";
 import ContactForm from "./ContactForm";
+import mondaySdk from "monday-sdk-js";
 
-function ViewContact({ selectedContact, onEdit, isEditing, cancelEdit, startEdit }) {
-    const [editedContact, setEditedContact] = useState({ ...selectedContact });
+function ViewContact({ contacts, selectedContact, onEdit, isEditing, cancelEdit, startEdit, onDelete, onUpdate }) {
+    const monday = mondaySdk();
 
-    const handleChange = (e) => {
-        setEditedContact({
-            ...editedContact,
-            [e.target.name]: e.target.value
-        });
-    };
-
-    const handleEditSubmit = (e) => {
-        e.preventDefault();
-        onEdit(editedContact); 
-        // resetEditing(false); 
-    };
-
-    // Sync editedContact when selectedContact changes
-    useEffect(() => {
-        setEditedContact({ ...selectedContact });
-    }, [selectedContact]);
+    async function deleteItem(itemId) {
+        // delete item from API 
+        try {
+            let query = `
+                mutation {
+                    delete_item (item_id: ${itemId}) {
+                        id
+                    }
+                }
+            `;
+            await monday.api(query);
+            
+            // Remove from local state
+            onDelete(itemId); 
+        } catch (error) {
+            console.error(error);
+        }
+    }
+    
 
     return (
         <div>
-            {isEditing ? 
+            {isEditing ?
                 (
                     <div>
-                        <ContactForm itemId={selectedContact.id} cancelEdit={cancelEdit}/>
+                        <ContactForm item={selectedContact} cancelEdit={cancelEdit} onUpdate={onUpdate}/>
                     </div>
                 ) : 
                 (
@@ -60,15 +43,26 @@ function ViewContact({ selectedContact, onEdit, isEditing, cancelEdit, startEdit
                             <p><strong>Last Name:</strong> {selectedContact.lastName}</p>
                             <p><strong>Status:</strong> {selectedContact.status}</p>
                         </div>
-                        <Button
-                            onClick={startEdit}
-                            color="primary"
-                            size="medium"
-                            kind="primary"
-                            disabled={false}
-                        >
-                            Edit Contact
-                        </Button>
+                        <div className="flexApart">
+                            <Button
+                                onClick={startEdit}
+                                color="primary"
+                                size="medium"
+                                kind="primary"
+                                disabled={false}
+                            >
+                                Edit Contact
+                            </Button>
+                            <Button
+                                onClick={() => {deleteItem(selectedContact.id)}}
+                                color="negative"
+                                size="medium"
+                                kind="primary"
+                                disabled={false}
+                            >
+                                Delete Contact
+                            </Button>
+                        </div>
                     </div>
                     
                 )

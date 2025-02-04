@@ -7,9 +7,10 @@ import mondaySdk from "monday-sdk-js";
 
 const monday = mondaySdk();
 
-function ContactForm({ itemId = null, onSuccess, cancelEdit}) {
+function ContactForm({ item, onSuccess, cancelEdit, onUpdate}) {
     const [statusValues, setStatusValues] = useState();
     const [formData, setFormData] = useState({
+        name: "",
         firstName: "",
         lastName: "",
         email: "",
@@ -23,10 +24,10 @@ function ContactForm({ itemId = null, onSuccess, cancelEdit}) {
         if (!statusValues) {
             getStatusValues();
         }
-        if (itemId) {
-            fetchItemData(itemId);
+        if (item) {
+            fetchItemData(item);
         }
-    }, [statusValues, itemId]);
+    }, [statusValues, item]);
 
     async function getStatusValues() {
         try {
@@ -52,9 +53,9 @@ function ContactForm({ itemId = null, onSuccess, cancelEdit}) {
         }
     }
 
-    async function fetchItemData(itemId) {
+    async function fetchItemData(selectedItem) {
         try {
-            const boardId = (await monday.get("context")).data.boardId;
+            const itemId = selectedItem.id;
             let query = `
                 query {
                     items (ids: [${itemId}]) {
@@ -69,6 +70,7 @@ function ContactForm({ itemId = null, onSuccess, cancelEdit}) {
             const response = await monday.api(query);
             const item = response.data.items[0];
             setFormData({
+                name: item.name || "",
                 firstName: item.column_values.find(col => col.id === "text_mkmmh4rt").text || "",
                 lastName: item.column_values.find(col => col.id === "text_mkmmhp5z").text || "",
                 email: item.column_values.find(col => col.id === "email_mkmmyw8x").text || "",
@@ -85,8 +87,8 @@ function ContactForm({ itemId = null, onSuccess, cancelEdit}) {
 
     const handleSubmit = useCallback(async (event) => {
         if (event) event.preventDefault();
-        if (itemId) {
-            await updateItem(itemId);
+        if (item) {
+            await updateItem(item);
             setSuccessText("Contact Updated");
         } else {
             await createItem();
@@ -94,7 +96,7 @@ function ContactForm({ itemId = null, onSuccess, cancelEdit}) {
         }
         setSuccess(true);
         if (onSuccess) onSuccess();
-    }, [formData, itemId]);
+    }, [formData, item]);
 
     async function createItem() {
         try {
@@ -123,9 +125,10 @@ function ContactForm({ itemId = null, onSuccess, cancelEdit}) {
         }
     }
 
-    async function updateItem(itemId) {
+    async function updateItem(item) {
         try {
             const boardId = (await monday.get("context")).data.boardId;
+            const itemId = item.id;
             const variables = { boardId, itemId };
             const columnValues = JSON.stringify({
                 name: formData.name,
@@ -142,16 +145,27 @@ function ContactForm({ itemId = null, onSuccess, cancelEdit}) {
                 }
             `;
             await monday.api(query, { variables });
+    
+            // Update Item in local state
+            const updatedContact = {
+                id: item.id,
+                name: formData.name,
+                firstName: formData.firstName,
+                lastName: formData.lastName,
+                status: formData.status.label
+            };
+            onUpdate(updatedContact);
+    
         } catch (error) {
             console.error(error);
         }
     }
 
     return (
-        <div>
+        <div className="contact-form-container">
             <form className="add-contact-view" onSubmit={handleSubmit}>
                 <div className="add-contact-inputs">
-                    {itemId && <TextField title="Name" value={formData.firstName} onChange={handleChange("name")} />}
+                    {item && <TextField title="Name" value={formData.name} onChange={handleChange("name")} />}
                     <TextField title="First Name" value={formData.firstName} onChange={handleChange("firstName")} />
                     <TextField title="Last Name" value={formData.lastName} onChange={handleChange("lastName")} />
                     <TextField title="Email" value={formData.email} onChange={handleChange("email")} />
@@ -160,9 +174,9 @@ function ContactForm({ itemId = null, onSuccess, cancelEdit}) {
                 </div>
                 <div className="flexApart">
                     <Button type="submit" size={Button.sizes.MEDIUM} success={success} successIcon={Check} successText={successText}>
-                        {itemId ? "Update Contact" : "Add Contact"}
+                        {item ? "Update Contact" : "Add Contact"}
                     </Button>
-                    {itemId && (
+                    {item && (
                         <Button
                             size={Button.sizes.MEDIUM} 
                             color="negative"

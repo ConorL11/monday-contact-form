@@ -23,16 +23,32 @@ function ViewContacts() {
 
 
     const handleContactClick = (contact) => {
+        console.log(contact)
         setSelectedContact(contact);
         cancelEdit();
     };
 
+    // Remove deleted contact from local state
+    const handleDeleteContact = (deletedId) => {
+        setContacts(contacts.filter(contact => contact.id !== deletedId));
+        setSelectedContact(null);
+    };
+
+    const handleUpdateContact = (updatedContact) => {
+        setContacts(prevContacts => {
+            return prevContacts.map(contact =>
+                contact.id === updatedContact.id ? updatedContact : contact
+            );
+        });
+        setSelectedContact(updatedContact);
+        cancelEdit();
+    };
+    
 
     useEffect(() => {
-        if (contacts.length === 0) {
-            getContacts();
-        }
-    }, [contacts]);
+        getContacts();
+    }, []);
+
 
     // Get Names on the board
     async function getContacts() {
@@ -41,7 +57,7 @@ function ViewContacts() {
             const boardId = context.data.boardId;
             let query = `query getNames2 {
                 boards(ids: ["8337996619"]){
-                    items_page{
+                    items_page(limit:500){
                         items {
                             id,
                             name,
@@ -66,6 +82,7 @@ function ViewContacts() {
                 status: contact.column_values[2]?.text, 
             }));
 
+            console.log(formattedContacts);
             setContacts(formattedContacts);
         } catch (error) {
             setLoaded(false);
@@ -86,9 +103,9 @@ function ViewContacts() {
                         {contacts.map((contact, index) => (
                             <ListItem 
                                 key={contact.id} 
-                                onClick={() => handleContactClick(contact)}  // Handle click to set selected contact
+                                onClick={() => handleContactClick(contact)} 
                                 className={`${selectedContact?.id === contact.id ? 'selected-contact' : ''}`}
-                                selected={selectedContact?.id === contact.id} // Mark as selected if it's the current contact
+                                selected={selectedContact?.id === contact.id} 
                             >
                                 {contact.firstName} {contact.lastName}
                             </ListItem>
@@ -98,7 +115,15 @@ function ViewContacts() {
                 <div className="contact-details-container">
                     <h3>Contact Details</h3>
                     {selectedContact ? (
-                        <ViewContact selectedContact={selectedContact} isEditing={isEditing} cancelEdit={() => cancelEdit()} startEdit={() => {startEdit()} } />
+                        <ViewContact 
+                            contacts={contacts} 
+                            selectedContact={selectedContact} 
+                            isEditing={isEditing} 
+                            cancelEdit={() => cancelEdit()} 
+                            startEdit={() => {startEdit()}}
+                            onDelete={handleDeleteContact}
+                            onUpdate={handleUpdateContact} 
+                        />
                     ) : (
                         <p>Select a contact to see their details</p>
                     )}
