@@ -21,7 +21,7 @@ import { useEffect, useState } from "react";
 import { Button } from "monday-ui-react-core";
 import ContactForm from "./ContactForm";
 
-function ViewContact({ selectedContact, onEdit, isEditing, resetEditing }) {
+function ViewContact({ selectedContact, onEdit, isEditing, cancelEdit, startEdit }) {
     const [editedContact, setEditedContact] = useState({ ...selectedContact });
 
     const handleChange = (e) => {
@@ -34,7 +34,7 @@ function ViewContact({ selectedContact, onEdit, isEditing, resetEditing }) {
     const handleEditSubmit = (e) => {
         e.preventDefault();
         onEdit(editedContact); 
-        resetEditing(false); 
+        // resetEditing(false); 
     };
 
     // Sync editedContact when selectedContact changes
@@ -47,7 +47,7 @@ function ViewContact({ selectedContact, onEdit, isEditing, resetEditing }) {
             {isEditing ? 
                 (
                     <div>
-                        <ContactForm itemId={selectedContact.id} onCancelEdit={resetEditing}/>
+                        <ContactForm itemId={selectedContact.id} cancelEdit={cancelEdit}/>
                     </div>
                 ) : 
                 (
@@ -61,39 +61,18 @@ function ViewContact({ selectedContact, onEdit, isEditing, resetEditing }) {
                             <p><strong>Status:</strong> {selectedContact.status}</p>
                         </div>
                         <Button
-                            onClick={() => resetEditing()}
+                            onClick={startEdit}
                             color="primary"
                             size="medium"
                             kind="primary"
                             disabled={false}
                         >
-                            {isEditing ? "Cancel Edit" : "Edit Contact"}
+                            Edit Contact
                         </Button>
                     </div>
                     
                 )
             }
-
-
-            {/* <Button
-                onClick={() => setIsEditing(!isEditing)}
-                color="primary"
-                size="medium"
-                kind="primary"
-                disabled={false}
-            >
-                {isEditing ? "Cancel Edit" : "Edit Contact"}
-            </Button>
-
-            <Button
-                onClick={() => onDelete(selectedContact.id)}
-                color="negative"
-                size="medium"
-                kind="secondary"
-                disabled={false}
-            >
-                Delete Contact
-            </Button> */}
 
         </div>
     );

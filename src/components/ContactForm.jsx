@@ -7,7 +7,7 @@ import mondaySdk from "monday-sdk-js";
 
 const monday = mondaySdk();
 
-function ContactForm({ itemId = null, onSuccess, onCancelEdit}) {
+function ContactForm({ itemId = null, onSuccess, cancelEdit}) {
     const [statusValues, setStatusValues] = useState();
     const [formData, setFormData] = useState({
         firstName: "",
@@ -15,7 +15,7 @@ function ContactForm({ itemId = null, onSuccess, onCancelEdit}) {
         email: "",
         status: "",
     });
-    
+
     const [successText, setSuccessText] = useState(null);
     const [success, setSuccess] = useState(null);
 
@@ -86,7 +86,7 @@ function ContactForm({ itemId = null, onSuccess, onCancelEdit}) {
     const handleSubmit = useCallback(async (event) => {
         if (event) event.preventDefault();
         if (itemId) {
-            await updateItem();
+            await updateItem(itemId);
             setSuccessText("Contact Updated");
         } else {
             await createItem();
@@ -123,26 +123,25 @@ function ContactForm({ itemId = null, onSuccess, onCancelEdit}) {
         }
     }
 
-    async function updateItem() {
+    async function updateItem(itemId) {
         try {
+            const boardId = (await monday.get("context")).data.boardId;
+            const variables = { boardId, itemId };
             const columnValues = JSON.stringify({
+                name: formData.name,
                 text_mkmmh4rt: formData.firstName,
                 text_mkmmhp5z: formData.lastName,
                 email_mkmmyw8x: { email: formData.email, text: formData.email },
                 status: formData.status.label
             }).replace(/"/g, '\\"');
             let query = `
-                mutation {
-                    change_multiple_column_values(
-                        item_id: ${itemId}, 
-                        board_id: (await monday.get("context")).data.boardId,
-                        column_values: "${columnValues}"
-                    ) {
+                mutation changeItemColumnValues($itemId:ID, $boardId:ID!) {
+                    change_multiple_column_values(item_id:$itemId, board_id:$boardId, column_values: "${columnValues}") {
                         id
                     }
                 }
             `;
-            await monday.api(query);
+            await monday.api(query, { variables });
         } catch (error) {
             console.error(error);
         }
@@ -152,6 +151,7 @@ function ContactForm({ itemId = null, onSuccess, onCancelEdit}) {
         <div>
             <form className="add-contact-view" onSubmit={handleSubmit}>
                 <div className="add-contact-inputs">
+                    {itemId && <TextField title="Name" value={formData.firstName} onChange={handleChange("name")} />}
                     <TextField title="First Name" value={formData.firstName} onChange={handleChange("firstName")} />
                     <TextField title="Last Name" value={formData.lastName} onChange={handleChange("lastName")} />
                     <TextField title="Email" value={formData.email} onChange={handleChange("email")} />
@@ -166,7 +166,7 @@ function ContactForm({ itemId = null, onSuccess, onCancelEdit}) {
                         <Button
                             size={Button.sizes.MEDIUM} 
                             color="negative"
-                            onClick={onCancelEdit}
+                            onClick={cancelEdit}
                         >
                             Cancel Update
                         </Button>

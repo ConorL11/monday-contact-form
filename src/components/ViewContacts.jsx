@@ -13,6 +13,21 @@ function ViewContacts() {
     const [isEditing, setIsEditing] = useState(false);
 
 
+    const cancelEdit = () => {
+        setIsEditing(false);
+    };
+
+    const startEdit = () =>{
+        setIsEditing(true);
+    }
+
+
+    const handleContactClick = (contact) => {
+        setSelectedContact(contact);
+        cancelEdit();
+    };
+
+
     useEffect(() => {
         if (contacts.length === 0) {
             getContacts();
@@ -58,10 +73,6 @@ function ViewContacts() {
         }
     }
 
-    const handleContactClick = (contact) => {
-        setSelectedContact(contact);
-        setIsEditing(false);
-    };
 
     if(loaded === false){
         return (
@@ -87,7 +98,7 @@ function ViewContacts() {
                 <div className="contact-details-container">
                     <h3>Contact Details</h3>
                     {selectedContact ? (
-                        <ViewContact selectedContact={selectedContact} isEditing={isEditing} resetEditing={() => setIsEditing(false)} />
+                        <ViewContact selectedContact={selectedContact} isEditing={isEditing} cancelEdit={() => cancelEdit()} startEdit={() => {startEdit()} } />
                     ) : (
                         <p>Select a contact to see their details</p>
                     )}
