@@ -30,10 +30,10 @@ body {
 /* Main View Styling */
 
 .contact-form {
-  background-color: gray;
+  background-color: #d3d3d3e3;
   border-radius: 10px;
   padding: 10px;
-  width: 40vw;
+  width: 70vw;
   height: 80vh;
   border: 2px solid;
 }
@@ -64,6 +64,11 @@ body {
 }
 
 /* Styling for Add Contacts View */
+.contact-form-container {
+  max-height: 50vh;
+  padding: 5px;
+  overflow-y: auto;  /* Enable vertical scrolling */
+}
 
 .add-contact-inputs {
   display: flex;
@@ -73,4 +78,31 @@ body {
 
 .add-contact-view {
   padding: 5px;
+}
+
+
+/* Styling for View Contacts  */
+.view-contacts-container {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+}
+
+.contacts-list-container {
+  max-height: 70vh;
+  padding: 5px;
+  border-right: 1px solid;
+  overflow-y: auto;  /* Enable vertical scrolling */
+}
+
+.contact-details-container {
+  padding: 5px;
+}
+
+.selected-contact {
+  background-color: rgb(159, 159, 159);
+}
+
+.selected-contact:hover{
+  background-color: rgb(159, 159, 159);
 }
