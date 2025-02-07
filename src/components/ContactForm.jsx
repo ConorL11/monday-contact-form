@@ -7,7 +7,17 @@ import mondaySdk from "monday-sdk-js";
 
 const monday = mondaySdk();
 
+
+
+// Define Function for adding or updating contact form
+// PROPS: 
+// Item - pass in item to update. Add new item if null
+// onSuccess - function for handling succesful update or add
+// cancelEdit - function for handling exiting out of the update form
+// onUpdate - state that 
 function ContactForm({ item, onSuccess, cancelEdit, onUpdate}) {
+
+    // form value handling
     const [statusValues, setStatusValues] = useState();
     const [formData, setFormData] = useState({
         name: "",
@@ -17,6 +27,8 @@ function ContactForm({ item, onSuccess, cancelEdit, onUpdate}) {
         status: "",
     });
 
+
+    // success handlers
     const [successText, setSuccessText] = useState(null);
     const [success, setSuccess] = useState(null);
 
@@ -29,6 +41,8 @@ function ContactForm({ item, onSuccess, cancelEdit, onUpdate}) {
         }
     }, [statusValues, item]);
 
+
+    // Retrieves status values from predefined "status" column and returns it in Dropdown friendly format
     async function getStatusValues() {
         try {
             const boardId = (await monday.get("context")).data.boardId;
@@ -53,6 +67,9 @@ function ContactForm({ item, onSuccess, cancelEdit, onUpdate}) {
         }
     }
 
+
+
+    // grabs item data from api to populate into form
     async function fetchItemData(selectedItem) {
         try {
             const itemId = selectedItem.id;
@@ -81,10 +98,13 @@ function ContactForm({ item, onSuccess, cancelEdit, onUpdate}) {
         }
     }
 
+    // handle the change to form fields
     const handleChange = (field) => (value) => {
         setFormData(prev => ({ ...prev, [field]: value }));
     };
 
+
+    // handle form submittal for new items or updates
     const handleSubmit = useCallback(async (event) => {
         if (event) event.preventDefault();
         if (item) {
@@ -98,6 +118,8 @@ function ContactForm({ item, onSuccess, cancelEdit, onUpdate}) {
         if (onSuccess) onSuccess();
     }, [formData, item]);
 
+
+    // function for item create. pass form values to board as a new item
     async function createItem() {
         try {
             const boardId = (await monday.get("context")).data.boardId;
@@ -125,6 +147,7 @@ function ContactForm({ item, onSuccess, cancelEdit, onUpdate}) {
         }
     }
 
+    // pass form values to selected item for item update
     async function updateItem(item) {
         try {
             const boardId = (await monday.get("context")).data.boardId;
@@ -161,11 +184,14 @@ function ContactForm({ item, onSuccess, cancelEdit, onUpdate}) {
         }
     }
 
+
     return (
         <div className="contact-form-container">
             <form className="add-contact-view" onSubmit={handleSubmit}>
                 <div className="add-contact-inputs">
-                    {item && <TextField title="Name" value={formData.name} onChange={handleChange("name")} />}
+                    {item && 
+                        <TextField title="Name" value={formData.name} onChange={handleChange("name")} />
+                    }
                     <TextField title="First Name" value={formData.firstName} onChange={handleChange("firstName")} />
                     <TextField title="Last Name" value={formData.lastName} onChange={handleChange("lastName")} />
                     <TextField title="Email" value={formData.email} onChange={handleChange("email")} />
@@ -177,11 +203,7 @@ function ContactForm({ item, onSuccess, cancelEdit, onUpdate}) {
                         {item ? "Update Contact" : "Add Contact"}
                     </Button>
                     {item && (
-                        <Button
-                            size={Button.sizes.MEDIUM} 
-                            color="negative"
-                            onClick={cancelEdit}
-                        >
+                        <Button size={Button.sizes.MEDIUM} color="negative" onClick={cancelEdit}>
                             Cancel Update
                         </Button>
                     )}

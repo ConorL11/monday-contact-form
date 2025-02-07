@@ -129,7 +129,6 @@ function ViewContacts() {
                     )}
                 </div>
             </div>
-
         )
     }
 }
