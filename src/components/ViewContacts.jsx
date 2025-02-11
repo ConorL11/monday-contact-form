@@ -2,12 +2,13 @@ import { useEffect, useState } from "react";
 import { List, ListItem } from "@vibe/core";
 import ViewContact from "./ViewContact";
 import "../App.css";
-import mondaySdk from "monday-sdk-js";
+import { useMondayContext } from "./context";
 
 
 // function for the entire view when the "View Contacts" tab is selected in the top of the form
 function ViewContacts() {
-    const monday = mondaySdk();
+
+    const { monday, mondayContext } = useMondayContext();
     const [loaded, setLoaded] = useState(null);
 
     const [contacts, setContacts] = useState([]);
@@ -55,8 +56,7 @@ function ViewContacts() {
     // Get Names on the board
     async function getContacts() {
         try {
-            const context = (await monday.get('context'));
-            const boardId = context.data.boardId;
+            const boardId = mondayContext.boardId;
             let query = `query getNames2 {
                 boards(ids: ["8337996619"]){
                     items_page(limit:500){

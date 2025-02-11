@@ -3,9 +3,10 @@ import { Check } from "monday-ui-react-core/icons";
 import { useCallback, useState, useEffect } from "react";
 import { TextField } from "@vibe/core";
 import "../App.css";
-import mondaySdk from "monday-sdk-js";
+import { useMondayContext } from "./context";
+// import mondaySdk from "monday-sdk-js";
 
-const monday = mondaySdk();
+// const monday = mondaySdk();
 
 
 
@@ -16,6 +17,10 @@ const monday = mondaySdk();
 // cancelEdit - function for handling exiting out of the update form
 // onUpdate - state that 
 function ContactForm({ item, onSuccess, cancelEdit, onUpdate}) {
+
+    // retrieve context
+    const { monday, mondayContext } = useMondayContext();
+
 
     // form value handling
     const [statusValues, setStatusValues] = useState();
@@ -45,7 +50,7 @@ function ContactForm({ item, onSuccess, cancelEdit, onUpdate}) {
     // Retrieves status values from predefined "status" column and returns it in Dropdown friendly format
     async function getStatusValues() {
         try {
-            const boardId = (await monday.get("context")).data.boardId;
+            const boardId = mondayContext.boardId;
             const variables = { boardId };
             let query = `
                 query getStatuses ($boardId:[ID!]){
@@ -124,7 +129,7 @@ function ContactForm({ item, onSuccess, cancelEdit, onUpdate}) {
     // function for item create. pass form values to board as a new item
     async function createItem() {
         try {
-            const boardId = (await monday.get("context")).data.boardId;
+            const boardId = mondayContext.boardId;
             const columnValues = JSON.stringify({ 
                 text_mkmmh4rt: formData.firstName, 
                 text_mkmmhp5z: formData.lastName, 
@@ -152,7 +157,7 @@ function ContactForm({ item, onSuccess, cancelEdit, onUpdate}) {
     // pass form values to selected item for item update
     async function updateItem(item) {
         try {
-            const boardId = (await monday.get("context")).data.boardId;
+            const boardId = mondayContext.boardId;
             const itemId = item.id;
             const variables = { boardId, itemId };
             const columnValues = JSON.stringify({
