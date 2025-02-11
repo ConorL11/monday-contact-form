@@ -107,13 +107,15 @@ function ContactForm({ item, onSuccess, cancelEdit, onUpdate}) {
     // handle form submittal for new items or updates
     const handleSubmit = useCallback(async (event) => {
         if (event) event.preventDefault();
-        if (item) {
+        if (item) { // update contact
             await updateItem(item);
             setSuccessText("Contact Updated");
-        } else {
+        } else { // add contact
             await createItem();
             setSuccessText("Contact Added");
-        }
+        } 
+
+        // update state for successful add or update
         setSuccess(true);
         if (onSuccess) onSuccess();
     }, [formData, item]);

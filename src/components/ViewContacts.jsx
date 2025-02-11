@@ -4,6 +4,8 @@ import ViewContact from "./ViewContact";
 import "../App.css";
 import mondaySdk from "monday-sdk-js";
 
+
+// function for the entire view when the "View Contacts" tab is selected in the top of the form
 function ViewContacts() {
     const monday = mondaySdk();
     const [loaded, setLoaded] = useState(null);
