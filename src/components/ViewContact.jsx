@@ -4,7 +4,7 @@ import { useMondayContext } from "./context";
 
 
 // function for when an individual contact is selected from the side bar
-function ViewContact({ contacts, selectedContact, onEdit, isEditing, cancelEdit, startEdit, onDelete, onUpdate }) {
+function ViewContact({ selectedContact, isEditing, cancelEdit, startEdit, onDelete, onUpdate }) {
     const { monday } = useMondayContext();
 
     async function deleteItem(itemId) {

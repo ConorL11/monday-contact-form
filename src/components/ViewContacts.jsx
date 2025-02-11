@@ -57,20 +57,35 @@ function ViewContacts() {
     async function getContacts() {
         try {
             const boardId = mondayContext.boardId;
-            let query = `query getNames2 {
-                boards(ids: ["8337996619"]){
-                    items_page(limit:500){
+            // let query = `query getNames2 {
+            //     boards(ids: ["8337996619"]){
+            //         items_page(limit:500){
+            //             items {
+            //                 id,
+            //                 name,
+            //                 column_values(ids:["text_mkmmh4rt","text_mkmmhp5z", "status"]){
+            //                     id,
+            //                     text
+            //                 }
+            //             }
+            //         }
+            //     }
+            // }`;
+            let query = `
+                query getNames ($boardId:[ID!]) {
+                    boards(ids: $boardId){
+                        items_page(limit:500){
                         items {
                             id,
-                            name,
-                            column_values(ids:["text_mkmmh4rt","text_mkmmhp5z", "status"]){
-                                id,
-                                text
+                            column_values(ids:["text_mkmmh4rt","text_mkmmhp5z"]){
+                            id,
+                            text
                             }
+                        }
                         }
                     }
                 }
-            }`;
+            `;
             const variables =  { boardId };
             const response = await monday.api(query, { variables });
             const contactsRaw = response.data.boards[0].items_page.items;
@@ -121,8 +136,8 @@ function ViewContacts() {
                             contacts={contacts} 
                             selectedContact={selectedContact} 
                             isEditing={isEditing} 
-                            cancelEdit={() => cancelEdit()} 
-                            startEdit={() => {startEdit()}}
+                            cancelEdit={cancelEdit} 
+                            startEdit={startEdit}
                             onDelete={handleDeleteContact}
                             onUpdate={handleUpdateContact} 
                         />
