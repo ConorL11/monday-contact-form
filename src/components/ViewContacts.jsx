@@ -57,20 +57,6 @@ function ViewContacts() {
     async function getContacts() {
         try {
             const boardId = mondayContext.boardId;
-            // let query = `query getNames2 {
-            //     boards(ids: ["8337996619"]){
-            //         items_page(limit:500){
-            //             items {
-            //                 id,
-            //                 name,
-            //                 column_values(ids:["text_mkmmh4rt","text_mkmmhp5z", "status"]){
-            //                     id,
-            //                     text
-            //                 }
-            //             }
-            //         }
-            //     }
-            // }`;
             let query = `
                 query getNames ($boardId:[ID!]) {
                     boards(ids: $boardId){
