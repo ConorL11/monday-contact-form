@@ -21,9 +21,14 @@ function ContactEditor({item, supportedColumnInfo, setContacts, setIsEditing, lo
     // Initialize form data using the lookup table
     const initialFormData = {};
     initialFormData['name'] = item?.name;
-    supportedColumnInfo.map((col) => {
-        const value = columnValuesLookup[col.id] || "";
-        initialFormData[col.id] = value;
+
+    supportedColumnInfo.map((column) => {
+        const value = columnValuesLookup[column.id] || "";
+        if(column.type === "status"){
+            initialFormData[column.id] = {id: value, label: value};
+        } else {
+            initialFormData[column.id] = value;
+        }
     });
 
     // define state for form data using initial form data which is either blank or pulls from the item passed in as a prop
