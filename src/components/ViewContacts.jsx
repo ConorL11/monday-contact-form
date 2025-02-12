@@ -1,13 +1,9 @@
 import { useState } from "react";
 import { List, ListItem, Loader } from "@vibe/core";
 import ContactDetails from "./ContactDetails";
-import { useMondayContext } from "./context";
 import "../App.css";
 
 function ViewContacts({ contacts, setContacts, isLoading, error, supportedColumnInfo }) {
-
-    // get monday context for boardId and monday SDK
-    const { monday } = useMondayContext();
 
     // state for what the user selects on the contact list
     const [selectedContactId, setSelectedContactId] = useState(null);

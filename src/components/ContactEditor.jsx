@@ -1,6 +1,6 @@
 import { Button, Dropdown } from "monday-ui-react-core";
 import { Check } from "monday-ui-react-core/icons";
-import { useCallback, useState, useEffect } from "react";
+import { useState } from "react";
 import { TextField } from "@vibe/core";
 import "../App.css";
 import { useMondayContext } from "./context";
@@ -156,8 +156,6 @@ function ContactEditor({item, supportedColumnInfo, setContacts, setIsEditing, lo
                     break;
                 }
             });
-
-            console.log(columnValues)
 
             // Stringify the column values for the API
             const columnValuesJSON = JSON.stringify(columnValues);

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { Button, Loader } from "@vibe/core";
 import { useMondayContext } from "./context";
 import { supportedColumns } from "./constants";
@@ -45,11 +45,7 @@ function ContactDetails({ contactId, supportedColumnInfo, setContacts, setSelect
             const variables = { contactId, supportedColumns };
             const response = await monday.api(query, { variables });
             const details = response.data.items[0];
-            // details.column_values.map(column => {
-            //     if(column.type === "status"){
-            //         column.dropdownFormattedStatus = {value: column.text, label: column.text};
-            //     }
-            // });
+
             setContactDetails(details);
             setIsLoadingDetails(false);
         } catch (err) {
