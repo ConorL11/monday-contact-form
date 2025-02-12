@@ -4,43 +4,18 @@ import ContactDetails from "./ContactDetails";
 import { useMondayContext } from "./context";
 import "../App.css";
 
-function ViewContacts({ contacts, setContacts, isLoading, error }) {
+function ViewContacts({ contacts, setContacts, isLoading, error, supportedColumnInfo }) {
 
     // get monday context for boardId and monday SDK
     const { monday } = useMondayContext();
 
     // state for what the user selects on the contact list
     const [selectedContactId, setSelectedContactId] = useState(null);
+
     const handleContactClick = (contact) => {
         setSelectedContactId(contact.id);
     };
 
-    const handleDeleteContact = async (contact) => {
-            // delete item from API 
-        try {
-            const contactId = contact.id
-            let query = `
-                mutation deleteItem($contactId:ID){
-                    delete_item (item_id: $contactId) {
-                        id
-                    }
-                }
-            `;
-            const variables = { contactId };
-            await monday.api(query, { variables });
-            
-            // Remove contact from local state
-            setContacts((prevContacts) =>
-                prevContacts.filter((contact) => contact.id !== contactId)
-            );
-
-            // unselect the deleted contact
-            setSelectedContactId(null);
-
-        } catch (error) {
-            throw new Error(`Error deleting contact: ${error}`);            
-        }
-    };
 
     if (error) return <div>A loading error occurred: {error.message}</div>;
 
@@ -70,13 +45,15 @@ function ViewContacts({ contacts, setContacts, isLoading, error }) {
                 }
             </div>
             <div className="contact-details-container">
-                <h3>Contact Details</h3>
                     {selectedContactId ? 
                         (
-                            <ContactDetails contactId={selectedContactId} deleteContact={handleDeleteContact} />
+                            <ContactDetails contactId={selectedContactId} setContacts={setContacts} supportedColumnInfo={supportedColumnInfo} setSelectedContactId={setSelectedContactId}/>
                         ) : 
                         (
-                            <p>Select a contact to see their details</p>
+                            <div>
+                                <h3>Contact Details</h3>
+                                <p>Select a contact to see their details</p>
+                            </div>
                         )
                     }
             </div>

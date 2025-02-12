@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import { Button } from "monday-ui-react-core";
 import { Heading } from "@vibe/core";
 import ViewContacts from "./ViewContacts";
-import ContactForm from "./ContactForm";
 import { useMondayContext } from "./context";
 import { supportedColumns } from "./constants";
 import ContactEditor from "./ContactEditor";

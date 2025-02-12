@@ -1,11 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
 import { Button, Loader } from "@vibe/core";
 import { useMondayContext } from "./context";
-import ContactForm from "./ContactForm";
 import { supportedColumns } from "./constants";
 import ContactEditor from "./ContactEditor";
 
-function ContactDetails({ contactId, deleteContact, onUpdate }) {
+function ContactDetails({ contactId, supportedColumnInfo, setContacts, setSelectedContactId }) {
     
     // get monday context for boardId and monday SDK
     const { monday } = useMondayContext();
@@ -20,56 +19,65 @@ function ContactDetails({ contactId, deleteContact, onUpdate }) {
 
     // wrap loadContactDetails in useEffect hook to pull new details on new contact selection
     useEffect(() => {
-        async function loadContactDetails() {
-            setIsLoadingDetails(true);
-            try {
-                // can add columnValues here to pull more into form
-                const query = `
-                    query getItemDetails ($contactId:[ID!], $supportedColumns:[String!]) {
-                        items (ids:$contactId){
+        loadContactDetails();
+    }, [contactId, monday,]);
+
+    async function loadContactDetails() {
+        setIsLoadingDetails(true);
+        try {
+            // can add columnValues here to pull more into form
+            const query = `
+                query getItemDetails ($contactId:[ID!], $supportedColumns:[String!]) {
+                    items (ids:$contactId){
+                        id, 
+                        name,
+                        column_values(ids:$supportedColumns){
                             id, 
-                            name,
-                            column_values(ids:$supportedColumns){
-                                id, 
-                                text, 
-                                column {
-                                    title
-                                }
+                            text, 
+                            column {
+                                title
                             }
                         }
                     }
-                `;
-                const variables = { contactId, supportedColumns };
-                const response = await monday.api(query, { variables });
-                const details = response.data.items[0];
-                setContactDetails(details);
-                setIsLoadingDetails(false);
-            } catch (err) {
-                setError(err);
-                setIsLoadingDetails(false);
-            }
+                }
+            `;
+            const variables = { contactId, supportedColumns };
+            const response = await monday.api(query, { variables });
+            const details = response.data.items[0];
+            setContactDetails(details);
+            setIsLoadingDetails(false);
+        } catch (err) {
+            setError(err);
+            setIsLoadingDetails(false);
         }
-        loadContactDetails();
-    }, [contactId, monday]);
+    }
 
-    const handleCancelEdit = useCallback(() => {
-        setIsEditing(false);
-    }, []);
+    const handleDeleteContact = async (contact) => {
+            // delete item from API 
+        try {
+            const contactId = contact.id
+            let query = `
+                mutation deleteItem($contactId:ID){
+                    delete_item (item_id: $contactId) {
+                        id
+                    }
+                }
+            `;
+            const variables = { contactId };
+            await monday.api(query, { variables });
+            
+            // Remove contact from local state
+            setContacts((prevContacts) =>
+                prevContacts.filter((contact) => contact.id !== contactId)
+            );
 
-    const handleUpdate = useCallback((updatedContact) => {
-        setContactDetails((prevDetails) => ({
-            ...prevDetails,
-            name: updatedContact.name || prevDetails.name,
-            column_values: prevDetails.column_values.map(col => ({
-                ...col,
-                text: updatedContact[col.id] || col.text, // Ensure updated values are applied
-            }))
-        }));
-        setIsEditing(false);
-        if (onUpdate) {
-            onUpdate(updatedContact);
+            // // unselect the deleted contact
+            setSelectedContactId(null);
+
+        } catch (error) {
+            throw new Error(`Error deleting contact: ${error}`);            
         }
-    }, [onUpdate]);
+    };
 
     if (isLoadingDetails) {
         return (
@@ -85,21 +93,12 @@ function ContactDetails({ contactId, deleteContact, onUpdate }) {
 
     if(isEditing){
         return (
-            // <ContactForm
-            //     item={contactDetails}
-            //     cancelEdit={handleCancelEdit}
-            //     onUpdate={handleUpdate}
-            // />
-            <ContactEditor 
-                item={contactDetails}
-                cancelEdit={handleCancelEdit}
-                onSave={handleUpdate}
-            />
+            <ContactEditor item={contactDetails} supportedColumnInfo={supportedColumnInfo} setContacts={setContacts} setIsEditing={setIsEditing} loadNewDetails={loadContactDetails}/>
         );
     }
 
     return (
-        <div>
+        <div className="contact-details-container">
             <div>
                 <h4>{contactDetails.name}</h4>
                 <p> <strong>ID:</strong> {contactDetails.id}</p>
@@ -120,7 +119,7 @@ function ContactDetails({ contactId, deleteContact, onUpdate }) {
                     Edit Contact
                 </Button>
                 <Button
-                    onClick={() => deleteContact(contactDetails)}
+                    onClick={() => handleDeleteContact(contactDetails)}
                     color="negative"
                     size="medium"
                     kind="primary"

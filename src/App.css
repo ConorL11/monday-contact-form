@@ -106,3 +106,11 @@ body {
 .selected-contact:hover{
   background-color: rgb(159, 159, 159);
 }
+
+/* Styling for contact details page */
+.contact-details-container {
+  max-height: 60vh;
+  padding: 5px;
+  border-right: 1px solid;
+  overflow-y: auto;  /* Enable vertical scrolling */
+}
