@@ -3,8 +3,8 @@ import { useState, useEffect } from "react";
 import { Button } from "monday-ui-react-core";
 import { Heading } from "@vibe/core";
 import ViewContacts from "./ViewContacts";
-import { useMondayContext } from "./context";
-import { supportedColumns } from "./constants";
+import { useMondayContext } from "../utils/context";
+import { supportedColumns } from "../utils/constants";
 import ContactEditor from "./ContactEditor";
 
 

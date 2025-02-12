@@ -63,7 +63,7 @@ body {
   border-right: 2px solid;
 }
 
-/* Styling for Add Contacts View */
+/* Styling for Contacts Editor */
 .contact-form-container {
   max-height: 50vh;
   padding: 5px;
@@ -78,6 +78,11 @@ body {
 
 .add-contact-view {
   padding: 5px;
+}
+
+.validation-error-text {
+  color: red;
+  font-size: smaller;
 }
 
 

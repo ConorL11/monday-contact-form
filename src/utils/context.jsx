@@ -1,5 +1,4 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { supportedColumns } from "./constants";
 import mondaySdk from "monday-sdk-js";
 
 const MondayContext = createContext();

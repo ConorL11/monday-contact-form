@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Button, Loader } from "@vibe/core";
-import { useMondayContext } from "./context";
-import { supportedColumns } from "./constants";
+import { useMondayContext } from "../utils/context";
+import { supportedColumns } from "../utils/constants";
 import ContactEditor from "./ContactEditor";
 
 function ContactDetails({ contactId, supportedColumnInfo, setContacts, setSelectedContactId }) {
