@@ -4,10 +4,6 @@ import { useCallback, useState, useEffect } from "react";
 import { TextField } from "@vibe/core";
 import "../App.css";
 import { useMondayContext } from "./context";
-// import mondaySdk from "monday-sdk-js";
-
-// const monday = mondaySdk();
-
 
 
 // Define Function for adding or updating contact form

@@ -1,139 +1,87 @@
-import { useEffect, useState } from "react";
-import { List, ListItem } from "@vibe/core";
-import ViewContact from "./ViewContact";
-import "../App.css";
+import { useState } from "react";
+import { List, ListItem, Loader } from "@vibe/core";
+import ContactDetails from "./ContactDetails";
 import { useMondayContext } from "./context";
+import "../App.css";
 
+function ViewContacts({ contacts, setContacts, isLoading, error }) {
 
-// function for the entire view when the "View Contacts" tab is selected in the top of the form
-function ViewContacts() {
+    // get monday context for boardId and monday SDK
+    const { monday } = useMondayContext();
 
-    const { monday, mondayContext } = useMondayContext();
-    const [loaded, setLoaded] = useState(null);
-
-    const [contacts, setContacts] = useState([]);
-    const [selectedContact, setSelectedContact] = useState(null);
-    const [isEditing, setIsEditing] = useState(false);
-
-
-    const cancelEdit = () => {
-        setIsEditing(false);
-    };
-
-    const startEdit = () =>{
-        setIsEditing(true);
-    }
-
-
+    // state for what the user selects on the contact list
+    const [selectedContactId, setSelectedContactId] = useState(null);
     const handleContactClick = (contact) => {
-        console.log(contact)
-        setSelectedContact(contact);
-        cancelEdit();
+        setSelectedContactId(contact.id);
     };
 
-    // Remove deleted contact from local state
-    const handleDeleteContact = (deletedId) => {
-        setContacts(contacts.filter(contact => contact.id !== deletedId));
-        setSelectedContact(null);
-    };
-
-    const handleUpdateContact = (updatedContact) => {
-        setContacts(prevContacts => {
-            return prevContacts.map(contact =>
-                contact.id === updatedContact.id ? updatedContact : contact
-            );
-        });
-        setSelectedContact(updatedContact);
-        cancelEdit();
-    };
-    
-
-    useEffect(() => {
-        getContacts();
-    }, []);
-
-
-    // Get Names on the board
-    async function getContacts() {
+    const handleDeleteContact = async (contact) => {
+            // delete item from API 
         try {
-            const boardId = mondayContext.boardId;
+            const contactId = contact.id
             let query = `
-                query getNames ($boardId:[ID!]) {
-                    boards(ids: $boardId){
-                        items_page(limit:500){
-                        items {
-                            id,
-                            column_values(ids:["text_mkmmh4rt","text_mkmmhp5z"]){
-                            id,
-                            text
-                            }
-                        }
-                        }
+                mutation deleteItem($contactId:ID){
+                    delete_item (item_id: $contactId) {
+                        id
                     }
                 }
             `;
-            const variables =  { boardId };
-            const response = await monday.api(query, { variables });
-            const contactsRaw = response.data.boards[0].items_page.items;
+            const variables = { contactId };
+            await monday.api(query, { variables });
+            
+            // Remove contact from local state
+            setContacts((prevContacts) =>
+                prevContacts.filter((contact) => contact.id !== contactId)
+            );
 
-            // Format contacts so they fit with the Dropdown component
-            const formattedContacts = contactsRaw.map(contact => ({
-                id: contact.id,
-                name: contact.name,
-                firstName: contact.column_values[0]?.text,
-                lastName: contact.column_values[1]?.text, 
-                status: contact.column_values[2]?.text, 
-            }));
+            // unselect the deleted contact
+            setSelectedContactId(null);
 
-            console.log(formattedContacts);
-            setContacts(formattedContacts);
         } catch (error) {
-            setLoaded(false);
-            console.log(error);
+            throw new Error(`Error deleting contact: ${error}`);            
         }
-    }
+    };
 
+    if (error) return <div>A loading error occurred: {error.message}</div>;
 
-    if(loaded === false){
-        return (
-            <div>A loading error occurred</div>
-        )
-    } else {
-        return (
-            <div className="view-contacts-container">
-                <div className="contacts-list-container">
+    return (
+        <div className="view-contacts-container">
+            <div className="contacts-list-container">
+                {isLoading ? 
+                    (
+                        <div className="flexApart">
+                            Loading Contacts... <Loader size={25} />
+                        </div>
+                    ) : 
+                    (
                     <List>
-                        {contacts.map((contact, index) => (
-                            <ListItem 
-                                key={contact.id} 
-                                onClick={() => handleContactClick(contact)} 
-                                className={`${selectedContact?.id === contact.id ? 'selected-contact' : ''}`}
-                                selected={selectedContact?.id === contact.id} 
+                        {contacts.map((contact) => (
+                            <ListItem
+                                key={contact.id}
+                                onClick={() => handleContactClick(contact)}
+                                className={`${selectedContactId === contact.id ? "selected-contact" : ""}`}
+                                selected={selectedContactId === contact.id}
                             >
-                                {contact.firstName} {contact.lastName}
+                                {contact.name}
                             </ListItem>
                         ))}
                     </List>
-                </div>
-                <div className="contact-details-container">
-                    <h3>Contact Details</h3>
-                    {selectedContact ? (
-                        <ViewContact 
-                            contacts={contacts} 
-                            selectedContact={selectedContact} 
-                            isEditing={isEditing} 
-                            cancelEdit={cancelEdit} 
-                            startEdit={startEdit}
-                            onDelete={handleDeleteContact}
-                            onUpdate={handleUpdateContact} 
-                        />
-                    ) : (
-                        <p>Select a contact to see their details</p>
-                    )}
-                </div>
+                    )
+                }
             </div>
-        )
-    }
+            <div className="contact-details-container">
+                <h3>Contact Details</h3>
+                    {selectedContactId ? 
+                        (
+                            <ContactDetails contactId={selectedContactId} deleteContact={handleDeleteContact} />
+                        ) : 
+                        (
+                            <p>Select a contact to see their details</p>
+                        )
+                    }
+            </div>
+        </div>
+    );
 }
 
-export default ViewContacts
+export default ViewContacts;

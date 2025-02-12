@@ -1,10 +1,11 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
+import { supportedColumns } from "./constants";
 import mondaySdk from "monday-sdk-js";
 
 const MondayContext = createContext();
 
 
-// function to grab monday SDK and monday context, and place them in a context provider
+// function to grab monday SDK, monday context, and supported column names, and place them in a context provider
 export const MondayProvider = ({ children }) => {
   const [monday, setMonday] = useState(null);
   const [mondayContext, setMondayContext] = useState(null);
