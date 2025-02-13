@@ -34,9 +34,10 @@ function ContactEditor({item, supportedColumnInfo, setContacts, setIsEditing, lo
     // define state for form data using initial form data which is either blank or pulls from the item passed in as a prop
     const [formData, setFormData] = useState(initialFormData);
 
-    // state for success handling
+    // state for success handling and actions running
     const [successText, setSuccessText] = useState(null);
     const [success, setSuccess] = useState(null);
+    const [actionRunning, setActionRunning] = useState(false);
 
     // handle user entry into the form and update the state of the formData
     const handleChange = (fieldId) => (value) => {
@@ -61,6 +62,7 @@ function ContactEditor({item, supportedColumnInfo, setContacts, setIsEditing, lo
     // function for item create. pass form values to board as a new item
     async function createItem() {
         try {
+            setActionRunning(true);
             const boardId = mondayContext.boardId;
             const itemName = itemNameOnCreate.map(id => formData[id] || "").join(" ");
 
@@ -104,6 +106,7 @@ function ContactEditor({item, supportedColumnInfo, setContacts, setIsEditing, lo
             // After creating the item, update the contacts state
             const newContact = { id: response.data.create_item.id, name: itemName };
             setContacts(prevContacts => [...prevContacts, newContact]);
+            setActionRunning(false);
             setSuccess(true);
             setSuccessText("Contact Added!");
         } catch (error) {
@@ -113,6 +116,7 @@ function ContactEditor({item, supportedColumnInfo, setContacts, setIsEditing, lo
 
     // pass form values to selected item for item update
     async function updateItem(item) {
+        setActionRunning(true);
         try {
             const boardId = mondayContext.boardId;
             const itemId = item.id;
@@ -169,7 +173,7 @@ function ContactEditor({item, supportedColumnInfo, setContacts, setIsEditing, lo
                     contact.id === updatedContact.id ? updatedContact : contact
                 );
             });
-
+            setActionRunning(false);
             setSuccess(true);
             setSuccessText("Contact Updated!"); 
 
@@ -276,6 +280,7 @@ function ContactEditor({item, supportedColumnInfo, setContacts, setIsEditing, lo
                                 successIcon={Check}
                                 successText={successText}
                                 disabled={!formIsValid}
+                                loading={actionRunning}
                             >
                                 Update Contact
                             </Button>
@@ -298,6 +303,7 @@ function ContactEditor({item, supportedColumnInfo, setContacts, setIsEditing, lo
                                 successIcon={Check}
                                 successText={successText}
                                 disabled={!formIsValid}
+                                loading={actionRunning}
                             >
                                 Add Contact
                             </Button>
