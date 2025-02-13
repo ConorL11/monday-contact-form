@@ -3,9 +3,9 @@ import { Check } from "monday-ui-react-core/icons";
 import { useState } from "react";
 import { TextField } from "@vibe/core";
 import "../App.css";
-import { useMondayContext } from "./context";
-import { itemNameOnCreate } from "./constants";
-
+import { useMondayContext } from "../utils/context";
+import { itemNameOnCreate } from "../utils/constants";
+import { validateEmail, validateName } from "../utils/formEntryValidation";
 
 function ContactEditor({item, supportedColumnInfo, setContacts, setIsEditing, loadNewDetails }) {
 
@@ -46,6 +46,7 @@ function ContactEditor({item, supportedColumnInfo, setContacts, setIsEditing, lo
         }));
     };
 
+    // either push a new item to the board or update the selected item
     const handleSubmit = async (event) => {
         event.preventDefault();
         if(!item){
@@ -54,6 +55,59 @@ function ContactEditor({item, supportedColumnInfo, setContacts, setIsEditing, lo
 
         if(item){
             updateItem(item);
+        }
+    }
+
+    // function for item create. pass form values to board as a new item
+    async function createItem() {
+        try {
+            const boardId = mondayContext.boardId;
+            const itemName = itemNameOnCreate.map(id => formData[id] || "").join(" ");
+
+            // Dynamically build columnValues based on supportedColumnInfo
+            const columnValues = {};
+            supportedColumnInfo.forEach((column) => {
+                const value = formData[column.id];
+                switch (column.type) {
+                    case "email":
+                        // For email columns, structure the value as an object
+                        columnValues[column.id] = {
+                            email: value,
+                            text: value,
+                        };
+                        break;
+                    case "status":
+                        // For status columns, use the selected value directly
+                        columnValues[column.id] = value;
+                        break;
+                    default:
+                        // Default to text handling
+                        columnValues[column.id] = value;
+                    break;
+                }
+            });
+
+            // Stringify the column values for the API
+            const columnValuesJSON = JSON.stringify(columnValues);
+
+            let query = `
+                mutation createItemColumns ($boardId:ID! $itemName:String!, $columnValuesJSON:JSON){
+                    create_item (board_id: $boardId, item_name: $itemName, column_values: $columnValuesJSON) {
+                        id
+                    }
+                }
+            `;
+            const variables = {boardId, itemName, columnValuesJSON}
+            const response = await monday.api(query, { variables });
+
+
+            // After creating the item, update the contacts state
+            const newContact = { id: response.data.create_item.id, name: itemName };
+            setContacts(prevContacts => [...prevContacts, newContact]);
+            setSuccess(true);
+            setSuccessText("Contact Added!");
+        } catch (error) {
+            console.error(error);
         }
     }
 
@@ -128,59 +182,6 @@ function ContactEditor({item, supportedColumnInfo, setContacts, setIsEditing, lo
         }
     }
 
-    // function for item create. pass form values to board as a new item
-    async function createItem() {
-        try {
-            const boardId = mondayContext.boardId;
-            const itemName = itemNameOnCreate.map(id => formData[id] || "").join(" ");
-
-            // Dynamically build columnValues based on supportedColumnInfo
-            const columnValues = {};
-            supportedColumnInfo.forEach((column) => {
-                const value = formData[column.id];
-                switch (column.type) {
-                    case "email":
-                        // For email columns, structure the value as an object
-                        columnValues[column.id] = {
-                            email: value,
-                            text: value,
-                        };
-                        break;
-                    case "status":
-                        // For status columns, use the selected value directly
-                        columnValues[column.id] = value;
-                        break;
-                    default:
-                        // Default to text handling
-                        columnValues[column.id] = value;
-                    break;
-                }
-            });
-
-            // Stringify the column values for the API
-            const columnValuesJSON = JSON.stringify(columnValues);
-
-            let query = `
-                mutation createItemColumns ($boardId:ID! $itemName:String!, $columnValuesJSON:JSON){
-                    create_item (board_id: $boardId, item_name: $itemName, column_values: $columnValuesJSON) {
-                        id
-                    }
-                }
-            `;
-            const variables = {boardId, itemName, columnValuesJSON}
-            const response = await monday.api(query, { variables });
-
-
-            // After creating the item, update the contacts state
-            const newContact = { id: response.data.create_item.id, name: itemName };
-            setContacts(prevContacts => [...prevContacts, newContact]);
-            setSuccess(true);
-            setSuccessText("Contact Added!");
-        } catch (error) {
-            console.error(error);
-        }
-    }
-
     //function to reset form to original data
     const resetForm = () => {
         setFormData(initialFormData); 
@@ -188,26 +189,63 @@ function ContactEditor({item, supportedColumnInfo, setContacts, setIsEditing, lo
         setSuccessText(null);
     }
 
+    // allow us to stop editing if we want to 
     const handleCancelEdit = () => {
         setIsEditing(false);
     }
+
+    const emailIsValid = supportedColumnInfo.filter((column) => column.type === "email").every((column) => validateEmail(formData[column.id]).status !== "error");
+    const nameConstsValid = supportedColumnInfo.filter((column) => itemNameOnCreate.includes(column.id)).every((column) => validateName(formData[column.id]).status !== "error");
+    const nameFieldValid = validateName(formData.name).status !== "error";
+    const formIsValid = emailIsValid && nameConstsValid && nameFieldValid;
 
     return (
         <div className="contact-form-container">
             <form className="add-contact-view" onSubmit={handleSubmit}> 
             <div className="add-contact-inputs">
-                {item && <TextField title="Name" value={formData.name} onChange={handleChange("name")} /> }
+                {item &&  
+                    <TextField 
+                        title="Name" 
+                        value={formData.name} 
+                        onChange={handleChange("name")} 
+                        required
+                    /> 
+                }
                 {supportedColumnInfo.map((column) => {
-                    // Render a text input if the column type is text or email
-                    if (column.type === "text" || column.type === "email") {
+                    // these fields are specified as names in constants. They have validation on them
+                    if (itemNameOnCreate.includes(column.id)) {
                         return (
                             <TextField
                                 key={column.id}
                                 title={column.title}
                                 value={formData[column.id]}
                                 onChange={handleChange(column.id)}
+                                required
                             />
                         );
+                    }
+                    // standard text columns
+                    if (column.type === "text") {
+                        return (
+                            <TextField 
+                                key={column.id}
+                                title={column.title}
+                                value={formData[column.id]}
+                                onChange={handleChange(column.id)}
+                            />
+                        )
+                    }
+                    // If a column is of type email, use email validation function
+                    if (column.type === "email") {
+                        return (
+                            <TextField 
+                                key={column.id}
+                                title={column.title}
+                                value={formData[column.id]}
+                                onChange={handleChange(column.id)}
+                                validation={validateEmail(formData[column.id])}
+                            />
+                        )
                     }
                     // Render a dropdown if the column type is status
                     if (column.type === "status") {
@@ -234,6 +272,7 @@ function ContactEditor({item, supportedColumnInfo, setContacts, setIsEditing, lo
                                 success={success}
                                 successIcon={Check}
                                 successText={successText}
+                                disabled={!formIsValid}
                             >
                                 Update Contact
                             </Button>
@@ -255,6 +294,7 @@ function ContactEditor({item, supportedColumnInfo, setContacts, setIsEditing, lo
                                 success={success}
                                 successIcon={Check}
                                 successText={successText}
+                                disabled={!formIsValid}
                             >
                                 Add Contact
                             </Button>

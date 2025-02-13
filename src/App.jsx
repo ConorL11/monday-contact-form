@@ -1,5 +1,5 @@
 import ContactForm from "./components/ContactFormContainer";
-import { MondayProvider } from "./components/context";
+import { MondayProvider } from "./utils/context";
 
 const App = () => {
 
