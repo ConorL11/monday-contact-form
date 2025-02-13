@@ -1,45 +1,60 @@
-## Overview
-This is the "Quickstart React" example Monday app. 
-<br>It can be used as a board view or dashboard widget, connected to a board and render data from the board using settings.
+# Monday.com Contact Management App
 
-<br>This app demonstrates how to use: 
-- [settings](https://developer.monday.com/apps/docs/mondayget#requesting-context-and-settings-data) 
-- [context](https://developer.monday.com/apps/docs/mondayget#sample-context-objects-for-each-feature-type) 
-- [API](https://developer.monday.com/apps/docs/mondayapi)
+This is a simple app that integrates with Monday.com to manage contacts. It allows you to create, update, and delete contacts directly from a Monday.com board.
 
-<br>You can find more info in our QuickStart guide [here](https://developer.monday.com/apps/docs/quickstart-view)
-<br /> ![Screenshot](https://dapulse-res.cloudinary.com/image/upload/w_900/v1591485466/remote_mondaycom_static/developers/screenshots/final_view.gif)
+## Features
 
-## Run the project
+- **Create a new contact**: Add contacts by filling in the required fields (First Name, Last Name, Email, etc.).
+- **Update an existing contact**: Pre-populate the form with the current contact details, allowing for easy updates.
+- **Delete a contact**: Delete a contact directly from the board.
 
-In the project directory, you should run:
+## Usage
 
-### `npm install`
+1. **Creating a New Contact**:  
+   - Fill in the fields (First Name, Last Name, Email, etc.) in the form and click the "Add Contact" button to create a new contact entry on your Monday.com board.
 
-And then to run an application with the monday tunnel, run:
+2. **Updating an Existing Contact**:  
+   - If an item is passed as a prop (for example, when you’re editing an existing contact), the form will pre-populate with the existing information, allowing for easy updates.
 
-### `npm start`
+3. **Deleting a Contact**:  
+   - To delete an existing contact, you can use the "Delete Contact" button. This will trigger an API call to remove the corresponding item from your Monday.com board.
 
-Find the provided URL in your terminal. This is your public URL, and you can use it to test your application.
-Example: https://abcd12345.apps-tunnel.monday.app
+## Installation
 
-## Configure Monday App 
+1. Clone this repository to your local machine:
 
-1. Open monday.com, login to your account and go to a "Developers" section.
-2. Create a new "QuickStart View Example App"
-3. Open "OAuth & Permissions" section and add "boards:read" scope
-4. Open "Features" section and create a new "Boards View" feature
-5. Open "View setup" tab and fulfill in "Custom URL" field your monday tunnel public URL, which you got previously (example: https://abcd12345.apps-tunnel.monday.app)
-6. Click "Boards" button and choose one of the boards with some data in it.
-7. Click "Preview button"
-8. Enjoy the Quickstart View Example app!
+   ```bash
+   git clone https://github.com/your-username/monday-contact-management.git
+   ```
 
-## Release your app
-1. Run script
-### `npm run build`
-2. Zip your "./build" folder
-3. Open "Build" tab in your Feature
-4. Click "New Build" button
-5. Click "Upload" radio button and upload zip file with your build
-6. Go to any board and add your just released view
-7. Enjoy!
+2. Navigate to the project directory:
+
+   ```bash
+   cd monday-contact-management
+   ```
+
+3. Install dependencies:
+
+   ```bash
+   npm install
+   ```
+
+4. Build the app:
+
+   ```bash
+   npm run build
+   ```
+
+5. Zip the build folder and upload it to the Monday.com feature.
+
+## Note
+
+This app is designed to work exclusively within Monday.com. To use it, you need to build the app and upload the ZIP file into a feature within Monday.com's developer platform.
+
+## Contributing
+
+If you would like to contribute, feel free to open a pull request or issue.
+
+## License
+
+This project is licensed under the MIT License.
