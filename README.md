@@ -25,3 +25,36 @@ This is a simple app that integrates with Monday.com to manage contacts. It allo
 
    ```bash
    git clone https://github.com/your-username/monday-contact-management.git
+   ```
+
+2. Navigate to the project directory:
+
+   ```bash
+   cd monday-contact-management
+   ```
+
+3. Install dependencies:
+
+   ```bash
+   npm install
+   ```
+
+4. Build the app:
+
+   ```bash
+   npm run build
+   ```
+
+5. Zip the build folder and upload it to the Monday.com feature.
+
+## Note
+
+This app is designed to work exclusively within Monday.com. To use it, you need to build the app and upload the ZIP file into a feature within Monday.com's developer platform.
+
+## Contributing
+
+If you would like to contribute, feel free to open a pull request or issue.
+
+## License
+
+This project is licensed under the MIT License.
