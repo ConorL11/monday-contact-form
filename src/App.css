@@ -1,3 +1,4 @@
+/* Parent App Styling */
 
 body {
   margin: 0;
@@ -12,11 +13,27 @@ body {
   justify-content: center;
 }
 
+
+/* Generic Styling */
+
+.flexApart {
+  display: flex;
+  justify-content: space-between;
+}
+
+.formInputHeader {
+  color: var(--primary-text-color);
+  padding-block: 2px;
+}
+
+
+/* Main View Styling */
+
 .contact-form {
-  background-color: gray;
+  background-color: #d3d3d3e3;
   border-radius: 10px;
   padding: 10px;
-  width: 40vw;
+  width: 70vw;
   height: 80vh;
   border: 2px solid;
 }
@@ -44,4 +61,61 @@ body {
 
 .add-contact-selector {
   border-right: 2px solid;
+}
+
+/* Styling for Contacts Editor */
+.contact-form-container {
+  max-height: 50vh;
+  padding: 5px;
+  overflow-y: auto;  /* Enable vertical scrolling */
+}
+
+.add-contact-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.add-contact-view {
+  padding: 5px;
+}
+
+.validation-error-text {
+  color: red;
+  font-size: smaller;
+}
+
+
+/* Styling for View Contacts  */
+.view-contacts-container {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+}
+
+.contacts-list-container {
+  max-height: 70vh;
+  padding: 5px;
+  border-right: 1px solid;
+  overflow-y: auto;  /* Enable vertical scrolling */
+}
+
+.contact-details-container {
+  padding: 5px;
+}
+
+.selected-contact {
+  background-color: rgb(159, 159, 159);
+}
+
+.selected-contact:hover{
+  background-color: rgb(159, 159, 159);
+}
+
+/* Styling for contact details page */
+.contact-details-container {
+  max-height: 60vh;
+  padding: 5px;
+  border-right: 1px solid;
+  overflow-y: auto;  /* Enable vertical scrolling */
 }
