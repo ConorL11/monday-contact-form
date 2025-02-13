@@ -2,12 +2,10 @@ import { Button, Dropdown } from "monday-ui-react-core";
 import { Check } from "monday-ui-react-core/icons";
 import { useState } from "react";
 import { TextField } from "@vibe/core";
-import EmailTextField from "../utils/EmailTextField";
 import "../App.css";
 import { useMondayContext } from "../utils/context";
 import { itemNameOnCreate } from "../utils/constants";
-import { validateEmail } from "../utils/formEntryValidation";
-
+import { validateEmail, validateName } from "../utils/formEntryValidation";
 
 function ContactEditor({item, supportedColumnInfo, setContacts, setIsEditing, loadNewDetails }) {
 
@@ -196,42 +194,58 @@ function ContactEditor({item, supportedColumnInfo, setContacts, setIsEditing, lo
         setIsEditing(false);
     }
 
-    // validate the form based on 
-    const formIsValidated = supportedColumnInfo.every((column) => {
-        if (column.type === "email") {
-            const { valid } = validateEmail(formData[column.id]);
-            return valid;
-        }
-        return true;
-    });
+    const emailIsValid = supportedColumnInfo.filter((column) => column.type === "email").every((column) => validateEmail(formData[column.id]).status !== "error");
+    const nameConstsValid = supportedColumnInfo.filter((column) => itemNameOnCreate.includes(column.id)).every((column) => validateName(formData[column.id]).status !== "error");
+    const nameFieldValid = validateName(formData.name).status !== "error";
+    const formIsValid = emailIsValid && nameConstsValid && nameFieldValid;
 
     return (
         <div className="contact-form-container">
             <form className="add-contact-view" onSubmit={handleSubmit}> 
             <div className="add-contact-inputs">
-                {item && <TextField title="Name" value={formData.name} onChange={handleChange("name")} /> }
+                {item &&  
+                    <TextField 
+                        title="Name" 
+                        value={formData.name} 
+                        onChange={handleChange("name")} 
+                        required
+                    /> 
+                }
                 {supportedColumnInfo.map((column) => {
-                    // Use text input if the column type is text
-                    if (column.type === "text") {
+                    // these fields are specified as names in constants. They have validation on them
+                    if (itemNameOnCreate.includes(column.id)) {
                         return (
                             <TextField
                                 key={column.id}
                                 title={column.title}
                                 value={formData[column.id]}
                                 onChange={handleChange(column.id)}
+                                required
                             />
                         );
                     }
-                    // Use custom Email Text Field if column type is email
+                    // standard text columns
+                    if (column.type === "text") {
+                        return (
+                            <TextField 
+                                key={column.id}
+                                title={column.title}
+                                value={formData[column.id]}
+                                onChange={handleChange(column.id)}
+                            />
+                        )
+                    }
+                    // If a column is of type email, use email validation function
                     if (column.type === "email") {
                         return (
-                          <EmailTextField
-                            key={column.id}
-                            title={column.title}
-                            value={formData[column.id]}
-                            onChange={handleChange(column.id)}
-                          />
-                        );
+                            <TextField 
+                                key={column.id}
+                                title={column.title}
+                                value={formData[column.id]}
+                                onChange={handleChange(column.id)}
+                                validation={validateEmail(formData[column.id])}
+                            />
+                        )
                     }
                     // Render a dropdown if the column type is status
                     if (column.type === "status") {
@@ -258,6 +272,7 @@ function ContactEditor({item, supportedColumnInfo, setContacts, setIsEditing, lo
                                 success={success}
                                 successIcon={Check}
                                 successText={successText}
+                                disabled={!formIsValid}
                             >
                                 Update Contact
                             </Button>
@@ -279,7 +294,7 @@ function ContactEditor({item, supportedColumnInfo, setContacts, setIsEditing, lo
                                 success={success}
                                 successIcon={Check}
                                 successText={successText}
-                                disabled={!formIsValidated}
+                                disabled={!formIsValid}
                             >
                                 Add Contact
                             </Button>
