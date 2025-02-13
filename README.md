@@ -1,45 +1,55 @@
-## Overview
-This is the "Quickstart React" example Monday app. 
-<br>It can be used as a board view or dashboard widget, connected to a board and render data from the board using settings.
+Contact Management App for Monday.com
+A simple React-based app designed to manage contact information within Monday.com, allowing users to create and update contact details directly from a Monday.com board. This app utilizes Monday.com’s API to interact with board data and dynamically generates forms based on the column configuration.
 
-<br>This app demonstrates how to use: 
-- [settings](https://developer.monday.com/apps/docs/mondayget#requesting-context-and-settings-data) 
-- [context](https://developer.monday.com/apps/docs/mondayget#sample-context-objects-for-each-feature-type) 
-- [API](https://developer.monday.com/apps/docs/mondayapi)
+Features
+Dynamic Forms: Automatically generates form fields based on Monday.com board column configuration, including support for text, email, and status columns.
+Add New Contacts: Create new contact entries by filling out the form fields.
+Update Existing Contacts: Edit contact information for existing items on the board.
+Monday.com API Integration: Interacts with the Monday.com API to create and update items on a board.
+Prerequisites
+This app is built to be embedded within Monday.com.
+You will need a Monday.com account and a board where you want to use this app.
+You must set up the app in Monday.com using their developer environment.
+Installation and Setup
+To use this app, you'll need to build and upload it to Monday.com:
 
-<br>You can find more info in our QuickStart guide [here](https://developer.monday.com/apps/docs/quickstart-view)
-<br /> ![Screenshot](https://dapulse-res.cloudinary.com/image/upload/w_900/v1591485466/remote_mondaycom_static/developers/screenshots/final_view.gif)
+Clone the Repository:
 
-## Run the project
+bash
+Copy
+Edit
+git clone https://github.com/yourusername/contact-management-app.git
+Install Dependencies: Navigate into the project directory and install the dependencies:
 
-In the project directory, you should run:
+bash
+Copy
+Edit
+cd contact-management-app
+npm install
+Build the App: Run the build command to bundle the app:
 
-### `npm install`
+bash
+Copy
+Edit
+npm run build
+Prepare for Upload: After the build completes, you'll have a build folder with all the necessary files.
 
-And then to run an application with the monday tunnel, run:
+Upload to Monday.com:
 
-### `npm start`
+Log in to your Monday.com developer environment.
+Go to the "Apps" section.
+Create a new app or select an existing app.
+Upload the contents of the build folder as a feature in your app.
+Configure Your App:
 
-Find the provided URL in your terminal. This is your public URL, and you can use it to test your application.
-Example: https://abcd12345.apps-tunnel.monday.app
+Set up environment variables or configurations required for interacting with the Monday.com API, such as the board ID and authentication details.
+Customize any settings in Monday.com for your app.
+Start Using: Once uploaded and configured, you can start using the app within your Monday.com account.
 
-## Configure Monday App 
 
-1. Open monday.com, login to your account and go to a "Developers" section.
-2. Create a new "QuickStart View Example App"
-3. Open "OAuth & Permissions" section and add "boards:read" scope
-4. Open "Features" section and create a new "Boards View" feature
-5. Open "View setup" tab and fulfill in "Custom URL" field your monday tunnel public URL, which you got previously (example: https://abcd12345.apps-tunnel.monday.app)
-6. Click "Boards" button and choose one of the boards with some data in it.
-7. Click "Preview button"
-8. Enjoy the Quickstart View Example app!
+Usage
+Creating a New Contact: Fill in the fields (First Name, Last Name, Email, etc.) in the form and click "Add Contact" to create a new contact entry on your Monday.com board.
 
-## Release your app
-1. Run script
-### `npm run build`
-2. Zip your "./build" folder
-3. Open "Build" tab in your Feature
-4. Click "New Build" button
-5. Click "Upload" radio button and upload zip file with your build
-6. Go to any board and add your just released view
-7. Enjoy!
+Updating an Existing Contact: If an item is passed as a prop (for example, when you’re editing an existing contact), the form will pre-populate with the existing information, allowing for easy updates.
+
+Deleting a Contact: If you need to delete an existing contact, there’s an option to remove the item directly from your Monday.com board. Clicking the "Delete Contact" button will prompt the app to delete the corresponding item.
