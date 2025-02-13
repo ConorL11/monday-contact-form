@@ -200,7 +200,7 @@ function ContactEditor({item, supportedColumnInfo, setContacts, setIsEditing, lo
     const formIsValid = emailIsValid && nameConstsValid && nameFieldValid;
 
     return (
-        <div className="contact-form-container">
+        <div className="contact-editor-container">
             <form className="add-contact-view" onSubmit={handleSubmit}> 
             <div className="add-contact-inputs">
                 {item &&  
@@ -257,7 +257,10 @@ function ContactEditor({item, supportedColumnInfo, setContacts, setIsEditing, lo
                                     title={column.title}
                                     value={formData[column.id]}
                                     onChange={handleChange(column.id)}
-                                />
+                                    dropdownMenuWrapperClassName="custom-dropdown-menu"
+                                    optionWrapperClassName="custom-dropdown-option"
+                                    singleValueWrapperClassName="custom-single-value"
+                                />  
                             </div>
                         );
                     }
@@ -265,7 +268,7 @@ function ContactEditor({item, supportedColumnInfo, setContacts, setIsEditing, lo
             </div>
                 {item ? 
                     ( 
-                        <div className="flexApart">
+                        <div className="submit-form-container">
                             <Button
                                 type="submit"
                                 size={Button.sizes.MEDIUM}
@@ -287,7 +290,7 @@ function ContactEditor({item, supportedColumnInfo, setContacts, setIsEditing, lo
                         </div>
                     ) : 
                     (
-                        <div className="flexApart">
+                        <div className="submit-form-container">
                             <Button
                                 type="submit"
                                 size={Button.sizes.MEDIUM}
