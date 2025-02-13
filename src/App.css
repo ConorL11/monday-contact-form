@@ -1,8 +1,30 @@
-/* Parent App Styling */
+/* CSS Color Variable Definitions */
+:root {
+  --bg-color: #121212;               /* Main background */
+  --card-bg-color: #1e1e1e;            /* Card and form backgrounds */
+  --text-color: #e0e0e0;               /* Default text color */
+  --primary-text-color: #b0b0b0;       /* For headers and less-emphatic text */
+  --border-color: #333333;            /* For borders */
+  --hover-color: #2a2a2a;             /* Hover state for clickable elements */
+  --selected-color: #3a3a3a;          /* For selected items */
+  --accent-color: #bb86fc;            /* Accent color (optional) */
+  --input-bg-color: #2c2c2c;           /* Form input background */
+  --input-border-color: #444444;       /* Form input border */
+  --input-hover-border-color: #666666; /* Form input focus/hover border */
+  --error-color: #cf6679;              /* Error text */
+  --button-bg-color: #2c2c2c;          /* Button background */
+  --button-hover-bg-color: #3c3c3c;     /* Button hover background */
+  --button-text-color: #e0e0e0;         /* Button text color */
+}
 
+
+
+/* Global App Styling */
 body {
   margin: 0;
   font-family: "Roboto", sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-color);
 }
 
 .App {
@@ -11,6 +33,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  background-color: var(--bg-color);
 }
 
 
@@ -30,12 +53,12 @@ body {
 /* Main View Styling */
 
 .contact-form {
-  background-color: #d3d3d3e3;
+  background-color: var(--card-bg-color);
   border-radius: 10px;
   padding: 10px;
   width: 70vw;
   height: 80vh;
-  border: 2px solid;
+  border: 2px solid var(--border-color);
 }
 
 .contact-form-views {
@@ -44,30 +67,31 @@ body {
   display: grid;
   gap: 1px;
   grid-template-columns: 1fr 1fr;
-  border-bottom: 2px solid;
+  border-bottom: 2px solid var(--border-color);
 }
 
 .contact-form-views :hover {
-  background-color: rgb(159, 159, 159);
+  background-color: var(--hover-color);
 }
 
 .headerButton {
   width: 100%;
+  background-color: var(--button-bg-color);
+  color: var(--button-text-color);
 }
 
 .headerButton.selected {
-  background-color: rgb(159, 159, 159);
+  background-color: var(--selected-color);
 }
 
 .add-contact-selector {
-  border-right: 2px solid;
+  border-right: 2px solid var(--border-color);
 }
 
 /* Styling for Contacts Editor */
-.contact-form-container {
+.contact-editor-container {
   max-height: 50vh;
   padding: 5px;
-  overflow-y: auto;  /* Enable vertical scrolling */
 }
 
 .add-contact-inputs {
@@ -81,8 +105,14 @@ body {
 }
 
 .validation-error-text {
-  color: red;
+  color: var(--error-color);
   font-size: smaller;
+}
+
+.submit-form-container {
+  display: flex;
+  justify-content: space-between;
+  margin: 25px 0px;
 }
 
 
@@ -102,20 +132,89 @@ body {
 
 .contact-details-container {
   padding: 5px;
+  border-right: 1px solid var(--border-color);
+
 }
 
 .selected-contact {
-  background-color: rgb(159, 159, 159);
+  background-color: var(--selected-color);
 }
 
 .selected-contact:hover{
-  background-color: rgb(159, 159, 159);
+  background-color: var(--selected-color);
 }
 
 /* Styling for contact details page */
 .contact-details-container {
   max-height: 60vh;
   padding: 5px;
-  border-right: 1px solid;
+  border-right: 1px solid var(--border-color);
   overflow-y: auto;  /* Enable vertical scrolling */
+}
+
+/* Form Input Styling */
+input,
+textarea {
+  background-color: var(--input-bg-color) !important;
+  color: var(--text-color) !important;
+  border: 1px solid var(--input-border-color) !important;
+  padding: 8px !important;
+  border-radius: 4px !important;
+}
+
+input:focus,
+textarea:focus {
+  border-color: var(--input-hover-border-color) !important;
+  outline: none !important;
+}
+
+.custom-dropdown-menu {
+  background-color: var(--input-bg-color) !important;
+  color: var(--text-color) !important;
+  border: 1px solid var(--input-border-color) !important;
+}
+
+.custom-dropdown-option {
+  background-color: var(--input-bg-color) !important;
+  color: var(--text-color) !important;
+}
+
+.custom-dropdown-option:hover {
+  background-color: var(--input-hover-border-color) !important;
+}
+
+.custom-single-value {
+  background-color: var(--input-bg-color) !important;
+  color: var(--text-color) !important;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+
+
+/* Terrible awful awful dropdown styling fix this eventually */
+/* Remove border from input field wrapper */
+.css-6dfa54-container, 
+.css-1sa9w64, 
+.css-okr7bz, 
+.css-189bwnh, 
+.css-lj5pjs-control {
+  background-color: var(--input-bg-color) !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Ensure input field inside the dropdown also follows the style */
+.css-6dfa54-container input {
+  background-color: var(--input-bg-color) !important;
+  border: none !important;
+  outline: none !important; 
+  box-shadow: none !important; 
+}
+
+/* Handle focus state */
+.css-6dfa54-container:focus-within,
+.css-lj5pjs-control:focus-within {
+  border: none !important;
+  box-shadow: none !important;
 }
